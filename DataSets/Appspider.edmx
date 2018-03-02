@@ -1,0 +1,381 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+  <!-- EF Runtime content -->
+  <edmx:Runtime>
+    <!-- SSDL content -->
+    <edmx:StorageModels>
+      <Schema Namespace="appspiderModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+        <EntityType Name="AttackVulnerability">
+          <Key>
+            <PropertyRef Name="AttackID" />
+          </Key>
+          <Property Name="AttackID" Type="uniqueidentifier" Nullable="false" />
+          <Property Name="AttackValue" Type="nvarchar(max)" />
+          <Property Name="AttackPOSTParams" Type="nvarchar(max)" />
+          <Property Name="AttackVulnURL" Type="nvarchar(max)" />
+          <Property Name="AttackMatchedString" Type="nvarchar(max)" />
+          <Property Name="VulnerabilityID" Type="uniqueidentifier" Nullable="false" />
+          <Property Name="OriginalValue" Type="nvarchar(max)" />
+        </EntityType>
+        <EntityType Name="AttackVulnerabilityTraffic">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="uniqueidentifier" Nullable="false" />
+          <Property Name="AttackId" Type="uniqueidentifier" Nullable="false" />
+          <Property Name="Request" Type="varchar(max)" />
+          <Property Name="Response" Type="varchar(max)" />
+          <Property Name="Benign" Type="bit" />
+        </EntityType>
+        <EntityType Name="Vulnerability">
+          <Key>
+            <PropertyRef Name="VulnerabilityID" />
+          </Key>
+          <Property Name="VulnerabilityID" Type="uniqueidentifier" Nullable="false" />
+          <Property Name="TargetID" Type="uniqueidentifier" Nullable="false" />
+          <Property Name="WebSite" Type="nvarchar" MaxLength="1024" />
+          <Property Name="VulnType" Type="nvarchar(max)" />
+          <Property Name="VulnURL" Type="nvarchar(max)" />
+          <Property Name="MatchedString" Type="nvarchar(max)" />
+          <Property Name="NormalizedPOSTParams" Type="nvarchar(max)" />
+          <Property Name="VulnParam" Type="nvarchar(max)" />
+          <Property Name="HTMLEntityAttacked" Type="nvarchar" MaxLength="200" />
+          <Property Name="AttackType" Type="nvarchar(max)" />
+          <Property Name="AttackValue" Type="nvarchar(max)" />
+          <Property Name="Method" Type="nvarchar" MaxLength="50" />
+          <Property Name="ResourceID" Type="uniqueidentifier" />
+          <Property Name="CWEID" Type="int" />
+          <Property Name="CAPEC" Type="int" />
+          <Property Name="DISSA_ASC" Type="int" />
+          <Property Name="OWASP2007" Type="int" />
+          <Property Name="OWASP2010" Type="int" />
+          <Property Name="OVAL" Type="int" />
+          <Property Name="AttackScore" Type="nchar" MaxLength="10" />
+          <Property Name="isAddedToJira" Type="bit" Nullable="false" />
+          <Property Name="isAddedToHPQC" Type="bit" Nullable="false" />
+          <Property Name="Status" Type="int" Nullable="false" />
+          <Property Name="DiscoveredDate" Type="datetime" Nullable="false" />
+          <Property Name="LatestDetectedDate" Type="datetime" Nullable="false" />
+          <Property Name="FixedDate" Type="datetime" />
+          <Property Name="IgnoreExpireDate" Type="datetime" />
+          <Property Name="Recommendation" Type="varchar(max)" />
+          <Property Name="Description" Type="varchar(max)" />
+          <Property Name="CrawlTrafficTemplate" Type="varchar(max)" />
+          <Property Name="OWASP2013" Type="int" />
+          <Property Name="isAddedToModulo" Type="bit" Nullable="false" />
+          <Property Name="VulnIP" Type="varchar(max)" />
+          <Property Name="OriginalValue" Type="nvarchar(max)" />
+        </EntityType>
+        <EntityType Name="VulnerabilityInScanDetails">
+          <Key>
+            <PropertyRef Name="ScanDetailsID" />
+            <PropertyRef Name="VulnerabilityID" />
+          </Key>
+          <Property Name="ScanDetailsID" Type="uniqueidentifier" Nullable="false" />
+          <Property Name="VulnerabilityID" Type="uniqueidentifier" Nullable="false" />
+          <Property Name="ArcherTicket" Type="varchar" MaxLength="50" />
+        </EntityType>
+        <Association Name="FK_AttackVulnerability_AttackVulnerabilityTraffic">
+          <End Role="AttackVulnerability" Type="Self.AttackVulnerability" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="AttackVulnerabilityTraffic" Type="Self.AttackVulnerabilityTraffic" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="AttackVulnerability">
+              <PropertyRef Name="AttackID" />
+            </Principal>
+            <Dependent Role="AttackVulnerabilityTraffic">
+              <PropertyRef Name="AttackId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Vulnerability_VulnerabilityID_to_AttackVulnerability_VulnerabilityID">
+          <End Role="Vulnerability" Type="Self.Vulnerability" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="AttackVulnerability" Type="Self.AttackVulnerability" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Vulnerability">
+              <PropertyRef Name="VulnerabilityID" />
+            </Principal>
+            <Dependent Role="AttackVulnerability">
+              <PropertyRef Name="VulnerabilityID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Vulnerability_VulnerabilityID_to_VulnerabilityInScanDetails_VulnerabilityID">
+          <End Role="Vulnerability" Type="Self.Vulnerability" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="VulnerabilityInScanDetails" Type="Self.VulnerabilityInScanDetails" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Vulnerability">
+              <PropertyRef Name="VulnerabilityID" />
+            </Principal>
+            <Dependent Role="VulnerabilityInScanDetails">
+              <PropertyRef Name="VulnerabilityID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityContainer Name="appspiderModelStoreContainer">
+          <EntitySet Name="AttackVulnerability" EntityType="Self.AttackVulnerability" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="AttackVulnerabilityTraffic" EntityType="Self.AttackVulnerabilityTraffic" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Vulnerability" EntityType="Self.Vulnerability" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="VulnerabilityInScanDetails" EntityType="Self.VulnerabilityInScanDetails" Schema="dbo" store:Type="Tables" />
+          <AssociationSet Name="FK_AttackVulnerability_AttackVulnerabilityTraffic" Association="Self.FK_AttackVulnerability_AttackVulnerabilityTraffic">
+            <End Role="AttackVulnerability" EntitySet="AttackVulnerability" />
+            <End Role="AttackVulnerabilityTraffic" EntitySet="AttackVulnerabilityTraffic" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Vulnerability_VulnerabilityID_to_AttackVulnerability_VulnerabilityID" Association="Self.FK_Vulnerability_VulnerabilityID_to_AttackVulnerability_VulnerabilityID">
+            <End Role="Vulnerability" EntitySet="Vulnerability" />
+            <End Role="AttackVulnerability" EntitySet="AttackVulnerability" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Vulnerability_VulnerabilityID_to_VulnerabilityInScanDetails_VulnerabilityID" Association="Self.FK_Vulnerability_VulnerabilityID_to_VulnerabilityInScanDetails_VulnerabilityID">
+            <End Role="Vulnerability" EntitySet="Vulnerability" />
+            <End Role="VulnerabilityInScanDetails" EntitySet="VulnerabilityInScanDetails" />
+          </AssociationSet>
+        </EntityContainer>
+      </Schema>
+    </edmx:StorageModels>
+    <!-- CSDL content -->
+    <edmx:ConceptualModels>
+      <Schema Namespace="appspiderModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+        <EntityType Name="AttackVulnerability">
+          <Key>
+            <PropertyRef Name="AttackID" />
+          </Key>
+          <Property Name="AttackID" Type="Guid" Nullable="false" />
+          <Property Name="AttackValue" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="AttackPOSTParams" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="AttackVulnURL" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="AttackMatchedString" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="VulnerabilityID" Type="Guid" Nullable="false" />
+          <Property Name="OriginalValue" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="AttackVulnerabilityTraffics" Relationship="Self.FK_AttackVulnerability_AttackVulnerabilityTraffic" FromRole="AttackVulnerability" ToRole="AttackVulnerabilityTraffic" />
+          <NavigationProperty Name="Vulnerability" Relationship="Self.FK_Vulnerability_VulnerabilityID_to_AttackVulnerability_VulnerabilityID" FromRole="AttackVulnerability" ToRole="Vulnerability" />
+        </EntityType>
+        <EntityType Name="AttackVulnerabilityTraffic">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Guid" Nullable="false" />
+          <Property Name="AttackId" Type="Guid" Nullable="false" />
+          <Property Name="Request" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="Response" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="Benign" Type="Boolean" />
+          <NavigationProperty Name="AttackVulnerability" Relationship="Self.FK_AttackVulnerability_AttackVulnerabilityTraffic" FromRole="AttackVulnerabilityTraffic" ToRole="AttackVulnerability" />
+        </EntityType>
+        <EntityType Name="Vulnerability">
+          <Key>
+            <PropertyRef Name="VulnerabilityID" />
+          </Key>
+          <Property Name="VulnerabilityID" Type="Guid" Nullable="false" />
+          <Property Name="TargetID" Type="Guid" Nullable="false" />
+          <Property Name="WebSite" Type="String" MaxLength="1024" FixedLength="false" Unicode="true" />
+          <Property Name="VulnType" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="VulnURL" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="MatchedString" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="NormalizedPOSTParams" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="VulnParam" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="HTMLEntityAttacked" Type="String" MaxLength="200" FixedLength="false" Unicode="true" />
+          <Property Name="AttackType" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="AttackValue" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Method" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="ResourceID" Type="Guid" />
+          <Property Name="CWEID" Type="Int32" />
+          <Property Name="CAPEC" Type="Int32" />
+          <Property Name="DISSA_ASC" Type="Int32" />
+          <Property Name="OWASP2007" Type="Int32" />
+          <Property Name="OWASP2010" Type="Int32" />
+          <Property Name="OVAL" Type="Int32" />
+          <Property Name="AttackScore" Type="String" MaxLength="10" FixedLength="true" Unicode="true" />
+          <Property Name="isAddedToJira" Type="Boolean" Nullable="false" />
+          <Property Name="isAddedToHPQC" Type="Boolean" Nullable="false" />
+          <Property Name="Status" Type="Int32" Nullable="false" />
+          <Property Name="DiscoveredDate" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="LatestDetectedDate" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="FixedDate" Type="DateTime" Precision="3" />
+          <Property Name="IgnoreExpireDate" Type="DateTime" Precision="3" />
+          <Property Name="Recommendation" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="Description" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="CrawlTrafficTemplate" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="OWASP2013" Type="Int32" />
+          <Property Name="isAddedToModulo" Type="Boolean" Nullable="false" />
+          <Property Name="VulnIP" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="OriginalValue" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="AttackVulnerabilities" Relationship="Self.FK_Vulnerability_VulnerabilityID_to_AttackVulnerability_VulnerabilityID" FromRole="Vulnerability" ToRole="AttackVulnerability" />
+          <NavigationProperty Name="VulnerabilityInScanDetails" Relationship="Self.FK_Vulnerability_VulnerabilityID_to_VulnerabilityInScanDetails_VulnerabilityID" FromRole="Vulnerability" ToRole="VulnerabilityInScanDetails" />
+        </EntityType>
+        <EntityType Name="VulnerabilityInScanDetail">
+          <Key>
+            <PropertyRef Name="ScanDetailsID" />
+            <PropertyRef Name="VulnerabilityID" />
+          </Key>
+          <Property Name="ScanDetailsID" Type="Guid" Nullable="false" />
+          <Property Name="VulnerabilityID" Type="Guid" Nullable="false" />
+          <Property Name="ArcherTicket" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <NavigationProperty Name="Vulnerability" Relationship="Self.FK_Vulnerability_VulnerabilityID_to_VulnerabilityInScanDetails_VulnerabilityID" FromRole="VulnerabilityInScanDetails" ToRole="Vulnerability" />
+        </EntityType>
+        <Association Name="FK_AttackVulnerability_AttackVulnerabilityTraffic">
+          <End Role="AttackVulnerability" Type="Self.AttackVulnerability" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="AttackVulnerabilityTraffic" Type="Self.AttackVulnerabilityTraffic" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="AttackVulnerability">
+              <PropertyRef Name="AttackID" />
+            </Principal>
+            <Dependent Role="AttackVulnerabilityTraffic">
+              <PropertyRef Name="AttackId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Vulnerability_VulnerabilityID_to_AttackVulnerability_VulnerabilityID">
+          <End Role="Vulnerability" Type="Self.Vulnerability" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="AttackVulnerability" Type="Self.AttackVulnerability" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Vulnerability">
+              <PropertyRef Name="VulnerabilityID" />
+            </Principal>
+            <Dependent Role="AttackVulnerability">
+              <PropertyRef Name="VulnerabilityID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Vulnerability_VulnerabilityID_to_VulnerabilityInScanDetails_VulnerabilityID">
+          <End Role="Vulnerability" Type="Self.Vulnerability" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="VulnerabilityInScanDetails" Type="Self.VulnerabilityInScanDetail" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Vulnerability">
+              <PropertyRef Name="VulnerabilityID" />
+            </Principal>
+            <Dependent Role="VulnerabilityInScanDetails">
+              <PropertyRef Name="VulnerabilityID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityContainer Name="appspiderEntities" annotation:LazyLoadingEnabled="true">
+          <EntitySet Name="AttackVulnerabilities" EntityType="Self.AttackVulnerability" />
+          <EntitySet Name="AttackVulnerabilityTraffics" EntityType="Self.AttackVulnerabilityTraffic" />
+          <EntitySet Name="Vulnerabilities" EntityType="Self.Vulnerability" />
+          <EntitySet Name="VulnerabilityInScanDetails" EntityType="Self.VulnerabilityInScanDetail" />
+          <AssociationSet Name="FK_AttackVulnerability_AttackVulnerabilityTraffic" Association="Self.FK_AttackVulnerability_AttackVulnerabilityTraffic">
+            <End Role="AttackVulnerability" EntitySet="AttackVulnerabilities" />
+            <End Role="AttackVulnerabilityTraffic" EntitySet="AttackVulnerabilityTraffics" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Vulnerability_VulnerabilityID_to_AttackVulnerability_VulnerabilityID" Association="Self.FK_Vulnerability_VulnerabilityID_to_AttackVulnerability_VulnerabilityID">
+            <End Role="Vulnerability" EntitySet="Vulnerabilities" />
+            <End Role="AttackVulnerability" EntitySet="AttackVulnerabilities" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Vulnerability_VulnerabilityID_to_VulnerabilityInScanDetails_VulnerabilityID" Association="Self.FK_Vulnerability_VulnerabilityID_to_VulnerabilityInScanDetails_VulnerabilityID">
+            <End Role="Vulnerability" EntitySet="Vulnerabilities" />
+            <End Role="VulnerabilityInScanDetails" EntitySet="VulnerabilityInScanDetails" />
+          </AssociationSet>
+        </EntityContainer>
+      </Schema>
+    </edmx:ConceptualModels>
+    <!-- C-S mapping content -->
+    <edmx:Mappings>
+      <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
+        <EntityContainerMapping StorageEntityContainer="appspiderModelStoreContainer" CdmEntityContainer="appspiderEntities">
+          <EntitySetMapping Name="AttackVulnerabilities">
+            <EntityTypeMapping TypeName="appspiderModel.AttackVulnerability">
+              <MappingFragment StoreEntitySet="AttackVulnerability">
+                <ScalarProperty Name="AttackID" ColumnName="AttackID" />
+                <ScalarProperty Name="AttackValue" ColumnName="AttackValue" />
+                <ScalarProperty Name="AttackPOSTParams" ColumnName="AttackPOSTParams" />
+                <ScalarProperty Name="AttackVulnURL" ColumnName="AttackVulnURL" />
+                <ScalarProperty Name="AttackMatchedString" ColumnName="AttackMatchedString" />
+                <ScalarProperty Name="VulnerabilityID" ColumnName="VulnerabilityID" />
+                <ScalarProperty Name="OriginalValue" ColumnName="OriginalValue" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="AttackVulnerabilityTraffics">
+            <EntityTypeMapping TypeName="appspiderModel.AttackVulnerabilityTraffic">
+              <MappingFragment StoreEntitySet="AttackVulnerabilityTraffic">
+                <ScalarProperty Name="Id" ColumnName="Id" />
+                <ScalarProperty Name="AttackId" ColumnName="AttackId" />
+                <ScalarProperty Name="Request" ColumnName="Request" />
+                <ScalarProperty Name="Response" ColumnName="Response" />
+                <ScalarProperty Name="Benign" ColumnName="Benign" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Vulnerabilities">
+            <EntityTypeMapping TypeName="appspiderModel.Vulnerability">
+              <MappingFragment StoreEntitySet="Vulnerability">
+                <ScalarProperty Name="VulnerabilityID" ColumnName="VulnerabilityID" />
+                <ScalarProperty Name="TargetID" ColumnName="TargetID" />
+                <ScalarProperty Name="WebSite" ColumnName="WebSite" />
+                <ScalarProperty Name="VulnType" ColumnName="VulnType" />
+                <ScalarProperty Name="VulnURL" ColumnName="VulnURL" />
+                <ScalarProperty Name="MatchedString" ColumnName="MatchedString" />
+                <ScalarProperty Name="NormalizedPOSTParams" ColumnName="NormalizedPOSTParams" />
+                <ScalarProperty Name="VulnParam" ColumnName="VulnParam" />
+                <ScalarProperty Name="HTMLEntityAttacked" ColumnName="HTMLEntityAttacked" />
+                <ScalarProperty Name="AttackType" ColumnName="AttackType" />
+                <ScalarProperty Name="AttackValue" ColumnName="AttackValue" />
+                <ScalarProperty Name="Method" ColumnName="Method" />
+                <ScalarProperty Name="ResourceID" ColumnName="ResourceID" />
+                <ScalarProperty Name="CWEID" ColumnName="CWEID" />
+                <ScalarProperty Name="CAPEC" ColumnName="CAPEC" />
+                <ScalarProperty Name="DISSA_ASC" ColumnName="DISSA_ASC" />
+                <ScalarProperty Name="OWASP2007" ColumnName="OWASP2007" />
+                <ScalarProperty Name="OWASP2010" ColumnName="OWASP2010" />
+                <ScalarProperty Name="OVAL" ColumnName="OVAL" />
+                <ScalarProperty Name="AttackScore" ColumnName="AttackScore" />
+                <ScalarProperty Name="isAddedToJira" ColumnName="isAddedToJira" />
+                <ScalarProperty Name="isAddedToHPQC" ColumnName="isAddedToHPQC" />
+                <ScalarProperty Name="Status" ColumnName="Status" />
+                <ScalarProperty Name="DiscoveredDate" ColumnName="DiscoveredDate" />
+                <ScalarProperty Name="LatestDetectedDate" ColumnName="LatestDetectedDate" />
+                <ScalarProperty Name="FixedDate" ColumnName="FixedDate" />
+                <ScalarProperty Name="IgnoreExpireDate" ColumnName="IgnoreExpireDate" />
+                <ScalarProperty Name="Recommendation" ColumnName="Recommendation" />
+                <ScalarProperty Name="Description" ColumnName="Description" />
+                <ScalarProperty Name="CrawlTrafficTemplate" ColumnName="CrawlTrafficTemplate" />
+                <ScalarProperty Name="OWASP2013" ColumnName="OWASP2013" />
+                <ScalarProperty Name="isAddedToModulo" ColumnName="isAddedToModulo" />
+                <ScalarProperty Name="VulnIP" ColumnName="VulnIP" />
+                <ScalarProperty Name="OriginalValue" ColumnName="OriginalValue" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="VulnerabilityInScanDetails">
+            <EntityTypeMapping TypeName="appspiderModel.VulnerabilityInScanDetail">
+              <MappingFragment StoreEntitySet="VulnerabilityInScanDetails">
+                <ScalarProperty Name="ScanDetailsID" ColumnName="ScanDetailsID" />
+                <ScalarProperty Name="VulnerabilityID" ColumnName="VulnerabilityID" />
+                <ScalarProperty Name="ArcherTicket" ColumnName="ArcherTicket" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+        </EntityContainerMapping>
+      </Mapping>
+    </edmx:Mappings>
+  </edmx:Runtime>
+  <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <Connection>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="MetadataArtifactProcessing" Value="EmbedInOutputAssembly" />
+      </DesignerInfoPropertySet>
+    </Connection>
+    <Options>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="ValidateOnBuild" Value="true" />
+        <DesignerProperty Name="EnablePluralization" Value="true" />
+        <DesignerProperty Name="IncludeForeignKeysInModel" Value="true" />
+        <DesignerProperty Name="UseLegacyProvider" Value="false" />
+        <DesignerProperty Name="CodeGenerationStrategy" Value="None" />
+      </DesignerInfoPropertySet>
+    </Options>
+    <!-- Diagram content (shape and connector positions) -->
+    <Diagrams></Diagrams>
+  </Designer>
+</edmx:Edmx>
